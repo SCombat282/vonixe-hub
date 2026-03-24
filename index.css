@@ -1,0 +1,304 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+:root {
+    /* Colors from VonixeLib */
+    --bg-main: #0c0c12;        /* Theme.BG */
+    --bg-surface: #120e0c;     /* Theme.BG2 */
+    --bg-sidebar: #0e0a08;     /* Theme.SIDEBAR */
+    --bg-card: rgba(26, 20, 14, 0.4); /* Theme.BG4 with alpha */
+    --border-color: #321e0a;   /* Theme.STROKE */
+    --border-accent: #502800;  /* Theme.STROKE2 */
+    --text-primary: #ffffff;   /* Theme.TEXT */
+    --text-secondary: #c8c3be; /* Theme.TEXT2 */
+    --text-muted: #82786e;     /* Theme.TEXT3 */
+    
+    /* Accents */
+    --vonixe-orange: #ffa000;  /* Theme.ACCENT2 */
+    --vonixe-orange-dark: #c83c00; /* Theme.ACCENT1 */
+    --vonixe-glow: rgba(200, 60, 0, 0.15);
+    
+    --unkie-purple: #a855f7;
+    --unkie-purple-muted: rgba(168, 85, 247, 0.1);
+    
+    /* Semantic Colors */
+    --success: #50dc78;        /* Theme.GREEN */
+    --danger: #ff5050;         /* Theme.RED */
+    --warning: #ffd232;        /* Theme.YELLOW */
+    
+    /* Spacing & Borders */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+}
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 100px;
+}
+
+body {
+    background: #08080a;
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+    z-index: 0;
+}
+
+h1, h2, h3, .font-outfit {
+    font-family: 'Outfit', sans-serif;
+}
+
+.mesh-gradient {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--mesh-bg);
+    z-index: -10;
+}
+
+.glow-orb {
+    position: fixed;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(200, 60, 0, 0.08) 0%, transparent 70%);
+    z-index: -9;
+    filter: blur(80px);
+    pointer-events: none;
+}
+
+/* Background Grid Pattern */
+.bg-grid {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: radial-gradient(circle at 1.5px 1.5px, rgba(255, 255, 255, 0.03) 1.5px, transparent 0);
+    background-size: 32px 32px;
+    pointer-events: none;
+    z-index: -8;
+}
+
+/* Scrollbar Styles */
+::-webkit-scrollbar {
+    width: 6px;
+}
+::-webkit-scrollbar-track {
+    background: var(--bg-main);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+}
+
+/* Reusable Components */
+
+.glass-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(10px);
+    border-radius: var(--radius-md);
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    border: 1px solid transparent;
+    gap: 8px;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.btn-primary {
+    background: var(--vonixe-orange);
+    color: #000;
+}
+
+.btn-primary:hover {
+    filter: brightness(1.1);
+    box-shadow: 0 0 20px var(--vonixe-glow);
+    transform: translateY(-1px);
+}
+
+.btn-outline {
+    background: transparent;
+    border-color: var(--border-color);
+    color: var(--text-secondary);
+}
+
+.btn-outline:hover {
+    background: rgba(255, 160, 0, 0.05);
+    border-color: var(--vonixe-orange);
+    color: #fff;
+}
+
+.badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.badge-working {
+    background: rgba(80, 220, 120, 0.1);
+    color: var(--success);
+    border: 1px solid rgba(80, 220, 120, 0.2);
+}
+
+.badge-patched {
+    background: rgba(255, 80, 80, 0.1);
+    color: var(--danger);
+    border: 1px solid rgba(255, 80, 80, 0.2);
+}
+
+.badge-discontinued {
+    background: rgba(130, 120, 110, 0.1);
+    color: var(--text-muted);
+    border: 1px solid rgba(130, 120, 110, 0.2);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade {
+    animation: fadeIn 0.5s ease forwards;
+}
+
+/* Card V2 Styles */
+.game-card-v2 {
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    transition: all 0.4s cubic-bezier(0.2, 1, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.card-v2-glow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(800px circle at var(--x, 0) var(--y, 0), rgba(255, 160, 0, 0.06), transparent 40%);
+    opacity: 0;
+    transition: opacity 0.5s;
+    pointer-events: none;
+}
+
+.game-card-v2:hover {
+    border-color: var(--vonixe-orange);
+    background: rgba(255, 160, 0, 0.05);
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.game-card-v2:hover .card-v2-glow { opacity: 1; }
+
+.game-title-v2 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.5px;
+}
+
+.features-tags-v2 {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.feature-tag-v2 {
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    padding: 5px 10px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+}
+
+.card-v2-action {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.75rem;
+    font-weight: 900;
+    color: var(--vonixe-orange);
+    transition: all 0.3s ease;
+}
+
+.game-card-v2:hover .card-v2-action {
+    gap: 15px;
+}
+/* Customizations V2.2 Removed - Moved to index.html for better control */
+
+.getscript-section { display: flex; flex-direction: column; gap: 30px; margin-top: 40px; }
+
+.script-loader-v2 {
+    padding: 0;
+    overflow: hidden;
+}
+
+.loader-header {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+}
+.loader-header span { font-size: 0.7rem; font-weight: 800; color: var(--text-muted); }
+
+.btn-copy {
+    background: transparent;
+    border: 1px solid rgba(255, 160, 0, 0.3);
+    color: var(--vonixe-orange);
+    padding: 5px 12px;
+    border-radius: 4px;
+    font-size: 0.65rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.btn-copy:hover { background: var(--vonixe-orange); color: #000; }
+
+.script-loader-v2 code {
+    display: block;
+    padding: 25px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9rem;
+    color: var(--vonixe-orange);
+    word-break: break-all;
+}
+
