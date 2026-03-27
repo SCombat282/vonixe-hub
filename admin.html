@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vonixe Admin | Cloud Console</title>
+    <title>Vonixe Cloud Admin</title>
+    <link rel="icon" type="image/x-icon" href="https://i.imgur.com/yjSJoOE.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css">
@@ -860,13 +861,13 @@
             </div>
 
             <div class="tabs">
-                <button class="tab-btn active" onclick="switchTab('dashboard')"><i class="fa-solid fa-gauge-high"></i>
+                <button class="tab-btn active" onclick="switchTab('dashboard', event)"><i class="fa-solid fa-gauge-high"></i>
                     Dashboard</button>
-                <button class="tab-btn" onclick="switchTab('directory')"><i class="fa-solid fa-folder-tree"></i> Game
+                <button class="tab-btn" onclick="switchTab('directory', event)"><i class="fa-solid fa-folder-tree"></i> Game
                     Editor</button>
-                <button class="tab-btn" onclick="switchTab('settings')"><i class="fa-solid fa-gears"></i> Global
+                <button class="tab-btn" onclick="switchTab('settings', event)"><i class="fa-solid fa-gears"></i> Global
                     Settings</button>
-                <button class="tab-btn" onclick="switchTab('monetization')"><i class="fa-solid fa-sack-dollar"></i>
+                <button class="tab-btn" onclick="switchTab('monetization', event)"><i class="fa-solid fa-sack-dollar"></i>
                     Monetization</button>
             </div>
 
@@ -945,15 +946,11 @@
             <div id="monetization" class="tab-content">
                 <div class="settings-grid">
                     <div class="config-box animate-fade">
-                        <div class="section-label"><i class="fa-solid fa-link"></i> Automated Monetization (LootLabs)</div>
+                        <div class="section-label"><i class="fa-solid fa-rectangle-ad"></i> Global Ad Monetization</div>
                         <div style="margin-bottom: 20px;">
-                            <label>LootLabs API Key (Optional)</label>
-                            <input type="password" id="loot-api-input" placeholder="Enter your LootLabs Token" onchange="checkDirty()">
-                        </div>
-                        <div style="margin-bottom: 20px;">
-                            <label>LootLabs Site Script (Full Page Script)</label>
-                            <textarea id="loot-script-input" rows="8" placeholder="<script ...></script>" onchange="checkDirty()" style="font-family: monospace; font-size: 0.8rem;"></textarea>
-                            <p style="font-size: 0.65rem; color: var(--text-muted); margin-top: 10px;">Paste the code from "Copy and paste code" step in LootLabs dashboard.</p>
+                            <label>Pop-under / Banner Script (Javascript)</label>
+                            <textarea id="loot-script-input" rows="8" placeholder="Paste your Ad Script here (AdMaven, Adsterra, PopAds, etc.)" onchange="checkDirty()" style="font-family: monospace; font-size: 0.8rem;"></textarea>
+                            <p style="font-size: 0.65rem; color: var(--text-muted); margin-top: 10px;">Paste the code from your ad provider. This script will run on every page load.</p>
                         </div>
                         <div>
                             <label>Monetization Status</label>
@@ -973,6 +970,19 @@
                         <div>
                             <label>Premium Purchase Link</label>
                             <input type="text" id="premium-key-input" placeholder="https://..." onchange="checkDirty()">
+                        </div>
+                    </div>
+
+                    <div class="config-box animate-fade">
+                        <div class="section-label"><i class="fa-solid fa-rocket"></i> CPM Booster (Direct Link)</div>
+                        <div style="margin-bottom: 20px;">
+                            <label>Adsterra Direct Link</label>
+                            <input type="text" id="direct-link-input" placeholder="https://considerableinsanityaside.com/..." onchange="checkDirty()">
+                            <p style="font-size: 0.65rem; color: var(--text-muted); margin-top: 5px;">Iklan akan muncul otomatis di tab baru setiap beberapa klik (CPM Tinggi).</p>
+                        </div>
+                        <div>
+                            <label>Muncul Setiap X Klik (Rekomendasi: 3)</label>
+                            <input type="number" id="click-threshold-input" value="3" min="1" onchange="checkDirty()" style="background: var(--bg-dark); border: 1px solid var(--vonixe-orange-dim); color: #fff; padding: 10px; border-radius: 6px; width: 80px;">
                         </div>
                     </div>
                 </div>
@@ -997,13 +1007,14 @@
 
         function checkDirty() {
             const btn = document.getElementById('publish-btn');
-            currentData.lua_loader = document.getElementById('loader-input').value;
-            currentData.games_supported = document.getElementById('stats-input').value;
-            currentData.monetization_enabled = document.getElementById('monetization-status').value === 'enabled';
-            currentData.free_key_link = document.getElementById('free-key-input').value;
-            currentData.premium_key_link = document.getElementById('premium-key-input').value;
-            currentData.lootlabs_api_key = document.getElementById('loot-api-input').value;
-            currentData.lootlabs_site_script = document.getElementById('loot-script-input').value;
+            if (document.getElementById('loader-input')) currentData.lua_loader = document.getElementById('loader-input').value;
+            if (document.getElementById('stats-input')) currentData.games_supported = document.getElementById('stats-input').value;
+            if (document.getElementById('monetization-status')) currentData.monetization_enabled = document.getElementById('monetization-status').value === 'enabled';
+            if (document.getElementById('free-key-input')) currentData.free_key_link = document.getElementById('free-key-input').value;
+            if (document.getElementById('premium-key-input')) currentData.premium_key_link = document.getElementById('premium-key-input').value;
+            if (document.getElementById('loot-script-input')) currentData.lootlabs_site_script = document.getElementById('loot-script-input').value;
+            if (document.getElementById('direct-link-input')) currentData.adsterra_direct_link = document.getElementById('direct-link-input').value;
+            if (document.getElementById('click-threshold-input')) currentData.ad_click_threshold = parseInt(document.getElementById('click-threshold-input').value) || 3;
 
             const isDirty = JSON.stringify(currentData) !== JSON.stringify(originalData);
             btn.style.display = isDirty ? 'flex' : 'none';
@@ -1028,7 +1039,11 @@
                 if (error) throw error;
 
                 console.log('Login success');
-                document.getElementById('login-overlay').classList.add('hidden');
+                const overlay = document.getElementById('login-overlay');
+                if (overlay) {
+                    overlay.classList.add('hidden');
+                    overlay.style.display = 'none';
+                }
                 document.getElementById('admin-panel').style.display = 'block';
                 initSupabase();
             } catch (err) {
@@ -1047,17 +1062,25 @@
         window.addEventListener('load', async () => {
             const { data: { session } } = await sbClient.auth.getSession();
             if (session) {
-                document.getElementById('login-overlay').classList.add('hidden');
+                const overlay = document.getElementById('login-overlay');
+                if (overlay) {
+                    overlay.classList.add('hidden');
+                    overlay.style.display = 'none';
+                }
                 initSupabase();
             }
         });
 
-        function switchTab(tabId) {
+        function switchTab(tabId, event) {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
 
-            document.getElementById(tabId).classList.add('active');
-            event.currentTarget.classList.add('active');
+            const target = document.getElementById(tabId);
+            if (target) target.classList.add('active');
+            
+            if (event && event.currentTarget) {
+                event.currentTarget.classList.add('active');
+            }
         }
 
         async function initSupabase() {
@@ -1072,18 +1095,21 @@
                 currentData = data;
                 originalData = JSON.parse(JSON.stringify(data)); // Create deep copy
 
-                document.getElementById('stats-input').value = data.games_supported || '25+';
-                document.getElementById('monetization-status').value = data.monetization_enabled ? 'enabled' : 'disabled';
-                document.getElementById('free-key-input').value = data.free_key_link || '';
-                document.getElementById('premium-key-input').value = data.premium_key_link || '';
+                if (document.getElementById('stats-input')) document.getElementById('stats-input').value = data.games_supported || '25+';
+                if (document.getElementById('monetization-status')) document.getElementById('monetization-status').value = data.monetization_enabled ? 'enabled' : 'disabled';
+                if (document.getElementById('free-key-input')) document.getElementById('free-key-input').value = data.free_key_link || '';
+                if (document.getElementById('premium-key-input')) document.getElementById('premium-key-input').value = data.premium_key_link || '';
                 if (document.getElementById('loot-api-input')) document.getElementById('loot-api-input').value = data.lootlabs_api_key || '';
                 if (document.getElementById('loot-script-input')) document.getElementById('loot-script-input').value = data.lootlabs_site_script || '';
+                if (document.getElementById('direct-link-input')) document.getElementById('direct-link-input').value = data.adsterra_direct_link || '';
+                if (document.getElementById('click-threshold-input')) document.getElementById('click-threshold-input').value = data.ad_click_threshold || 3;
 
                 // Dashboard Stats
-                const totalGames = data.games.length;
+                const gamesArr = data.games || [];
+                const totalGames = gamesArr.length;
                 document.getElementById('stat-total-games').textContent = totalGames;
                 let totalFeat = 0;
-                data.games.forEach(g => totalFeat += (g.features || []).length);
+                gamesArr.forEach(g => totalFeat += (g.features || []).length);
                 document.getElementById('stat-avg-features').textContent = totalGames > 0 ? (totalFeat / totalGames).toFixed(1) : 0;
 
                 document.getElementById('admin-panel').style.display = 'block';
@@ -1092,7 +1118,8 @@
                 renderGameList();
                 checkDirty();
             } catch (e) {
-                Swal.fire('Fatal Error', 'Database connection failed.', 'error');
+                console.error(e);
+                Swal.fire('Fatal Error', 'Database connection failed: ' + e.message, 'error');
             }
         }
 
@@ -1321,8 +1348,9 @@
                 monetization_enabled: currentData.monetization_enabled,
                 free_key_link: currentData.free_key_link,
                 premium_key_link: currentData.premium_key_link,
-                lootlabs_api_key: currentData.lootlabs_api_key,
-                lootlabs_site_script: currentData.lootlabs_site_script
+                lootlabs_site_script: currentData.lootlabs_site_script,
+                adsterra_direct_link: currentData.adsterra_direct_link,
+                ad_click_threshold: parseInt(currentData.ad_click_threshold) || 3
             };
 
             const { error } = await sbClient
