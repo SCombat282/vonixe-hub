@@ -20,10 +20,10 @@
         <div class="nav-content">
             <div class="logo logo-shimmer" style="display: none;">VONIXE<span>HUB</span></div>
             <div class="nav-links">
-                <a href="#" class="active"><i class="fa-solid fa-house"></i> HOME</a>
+                <a href="#scripts" class="active"><i class="fa-solid fa-house"></i> HOME</a>
                 <a href="#scripts"><i class="fa-solid fa-code"></i> SCRIPTS</a>
                 <a href="https://discord.gg/k7W9xEytP8"><i class="fa-solid fa-users"></i> COMMUNITY</a>
-                <a href="#getscript"><i class="fa-solid fa-download"></i> GET SCRIPT</a>
+                <a href="javascript:void(0)" onclick="showKeySystem()"><i class="fa-solid fa-key"></i> GET KEY</a>
             </div>
             <div class="nav-actions">
                 <div class="vonixe-status">
@@ -43,9 +43,12 @@
             <h1 class="hero-title-v2 animate-fade" style="animation-delay: 0.1s;">
                 VONIXE HUB
             </h1>
-            <div class="hero-btns animate-fade" style="animation-delay: 0.3s;">
-                <a href="#scripts" class="btn btn-premium-glow">EXPLORE SCRIPTS <i class="fa-solid fa-chevron-right"></i></a>
-                <a href="https://discord.gg/k7W9xEytP8" class="btn btn-blur"><i class="fa-brands fa-discord"></i> JOIN DISCORD</a>
+            <div class="hero-btns animate-fade" style="animation-delay: 0.3s; flex-direction: column; align-items: center; gap: 15px;">
+                <div style="display: flex; gap: 20px; justify-content: center;">
+                    <a href="#scripts" class="btn btn-blur">EXPLORE SCRIPTS <i class="fa-solid fa-chevron-right"></i></a>
+                    <a href="https://discord.gg/k7W9xEytP8" class="btn btn-blur"><i class="fa-brands fa-discord"></i> JOIN DISCORD</a>
+                </div>
+                <a href="javascript:void(0)" onclick="showKeySystem()" class="btn btn-premium-glow" style="width: 100%; max-width: 440px;">GET KEY <i class="fa-solid fa-key"></i></a>
             </div>
         </section>
 
@@ -132,6 +135,55 @@
                         </a>
                     </div>
                 </div>
+            </div>
+        </section>
+        <!-- Key System View (Hidden by default) -->
+        <section id="key-system" class="detail-view animate-fade" style="display: none; margin-top: 40px; padding-bottom: 100px;">
+            <div class="detail-header" style="text-align: center; margin-bottom: 60px;">
+                <h1 class="hero-title-v2" style="font-size: 3.5rem; margin-bottom: 10px;">KEY SYSTEM</h1>
+                <p style="color: var(--text-muted); font-weight: 800; letter-spacing: 2px;">CHOOSE YOUR ACCESS METHOD</p>
+            </div>
+
+            <div class="key-grid">
+                <!-- Free Key Card -->
+                <div class="glass-card key-card" id="free-key-card">
+                    <div class="key-card-header">
+                        <i class="fa-solid fa-bolt-lightning"></i>
+                        <h3>FREE KEY</h3>
+                    </div>
+                    <p class="key-desc">Complete a quick checkpoint to get 24-hour access to all scripts.</p>
+                    <ul class="key-features">
+                        <li><i class="fa-solid fa-check"></i> 24 Hour Access</li>
+                        <li><i class="fa-solid fa-check"></i> Ad-Supported</li>
+                        <li><i class="fa-solid fa-check"></i> Basic Support</li>
+                    </ul>
+                    <button class="btn btn-secondary" style="width: 100%; margin-top: 20px;" onclick="handleFreeKey()">GET FREE KEY <i class="fa-solid fa-arrow-up-right-from-square"></i></button>
+                </div>
+
+                <!-- Premium Key Card -->
+                <div class="glass-card key-card premium" id="premium-key-card">
+                    <div class="premium-badge">RECOMMENDED</div>
+                    <div class="key-card-header">
+                        <i class="fa-solid fa-crown"></i>
+                        <h3>PREMIUM</h3>
+                    </div>
+                    <p class="key-desc">No ads, instant access, and exclusive premium features forever.</p>
+                    <ul class="key-features">
+                        <li><i class="fa-solid fa-check"></i> No Ads or Key Process</li>
+                        <li><i class="fa-solid fa-check"></i> 30 Days Access</li>
+                        <li><i class="fa-solid fa-check"></i> Priority Support</li>
+                    </ul>
+                    <div class="price-box">
+                        <span class="currency">Rp.</span>
+                        <span class="amount">10.000</span>
+                        <span class="duration">/ 30 DAYS</span>
+                    </div>
+                    <button class="btn btn-premium-glow" style="width: 100%; margin-top: 20px;" onclick="handlePremiumKey()">ACQUIRE LICENSE <i class="fa-solid fa-cart-shopping"></i></button>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 50px;">
+                <button class="btn-blur" onclick="backToMain()"><i class="fa-solid fa-arrow-left"></i> BACK TO HOME</button>
             </div>
         </section>
     </main>
@@ -588,6 +640,109 @@
             .detail-content { grid-template-columns: 1fr; }
             .feature-list { grid-template-columns: 1fr; }
             .hero-title-v2 { font-size: 2.8rem !important; }
+        }
+
+        /* Key System Grid */
+        .key-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .key-card {
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            position: relative;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .key-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .key-card.premium {
+            border: 1.5px solid var(--vonixe-orange);
+            background: linear-gradient(145deg, rgba(255, 160, 0, 0.05), rgba(0, 0, 0, 0.2));
+            box-shadow: 0 0 30px rgba(255, 160, 0, 0.1);
+        }
+
+        .premium-badge {
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            background: var(--vonixe-orange);
+            color: #000;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.6rem;
+            font-weight: 900;
+            letter-spacing: 1px;
+        }
+
+        .key-card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .key-card-header i {
+            font-size: 1.5rem;
+            color: var(--vonixe-orange);
+        }
+
+        .key-card-header h3 {
+            font-size: 1.4rem;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+        }
+
+        .key-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .key-features {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .key-features li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .key-features li i {
+            color: var(--vonixe-orange);
+            font-size: 0.7rem;
+        }
+
+        .price-box {
+            margin-top: 10px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .currency { font-size: 0.9rem; font-weight: 800; color: var(--text-muted); vertical-align: top; margin-top: 5px; display: inline-block; }
+        .amount { font-size: 2.2rem; font-weight: 900; color: #fff; }
+        .duration { font-size: 0.75rem; font-weight: 800; color: var(--text-muted); letter-spacing: 1px; }
+
+        @media (max-width: 480px) {
+            .key-grid { grid-template-columns: 1fr; }
         }
     </style>
 
