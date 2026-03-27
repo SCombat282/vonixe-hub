@@ -108,6 +108,8 @@ document.addEventListener('DOMContentLoaded', () => {
     loadSiteData();
     fetchDiscordMembers();
     
+    const searchInput = document.getElementById('game-search');
+    let searchTimeout;
     const copyBtn = document.getElementById('copy-script');
     if (copyBtn) {
         copyBtn.addEventListener('click', () => {
