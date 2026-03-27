@@ -16,6 +16,11 @@ let games = [];
 let luaLoaderCode = 'loadstring(game:HttpGet("https://vonixehub.com/raw"))()';
 let gamesSupported = '25+';
 
+// --- MONETIZATION CONFIG ---
+let monetizationEnabled = false;
+let freeKeyLink = '';
+let premiumKeyLink = '';
+
 async function loadSiteData() {
     const supabase = getSupabase();
     if (!supabase) {
@@ -23,8 +28,6 @@ async function loadSiteData() {
         setTimeout(loadSiteData, 500);
         return;
     }
-
-    console.log('Fetching data from Supabase: ' + SUPABASE_URL);
 
     try {
         const { data, error } = await supabase
@@ -37,6 +40,24 @@ async function loadSiteData() {
             if (data.lua_loader) luaLoaderCode = data.lua_loader;
             if (data.games_supported) gamesSupported = data.games_supported;
             
+            // Monetization
+            monetizationEnabled = data.monetization_enabled || false;
+            freeKeyLink = data.free_key_link || '';
+            premiumKeyLink = data.premium_key_link || '';
+            
+            // Inject Site Script if provided
+            if (data.lootlabs_site_script && monetizationEnabled) {
+                const scriptContainer = document.createElement('div');
+                scriptContainer.innerHTML = data.lootlabs_site_script;
+                const scripts = scriptContainer.querySelectorAll('script');
+                scripts.forEach(oldScript => {
+                    const newScript = document.createElement('script');
+                    Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                    newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                    document.head.appendChild(newScript);
+                });
+            }
+
             renderGames();
             updateLuaUI();
             updateStatsUI();
@@ -102,6 +123,15 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 150);
         });
     }
+
+    // Navbar "GET SCRIPT" Link
+    const getScriptLink = document.querySelector('a[href="#getscript"]');
+    if (getScriptLink) {
+        getScriptLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            showKeySystem();
+        });
+    }
 });
 
 function renderGames(filter = '') {
@@ -109,11 +139,7 @@ function renderGames(filter = '') {
     if (!container) return;
 
     container.innerHTML = '';
-    
-    // No fallback, only show what's in the cloud
-    const displayGames = games;
-
-    const filteredGames = displayGames.filter(game => 
+    const filteredGames = games.filter(game => 
         game.title.toLowerCase().includes(filter.toLowerCase())
     );
 
@@ -147,20 +173,9 @@ function renderGames(filter = '') {
             </div>
         `;
 
-        let rect;
-        card.addEventListener('mouseenter', () => {
-            rect = card.getBoundingClientRect();
+        card.addEventListener('click', () => {
+            showGameDetail(games.indexOf(game));
         });
-
-        card.addEventListener('mousemove', (e) => {
-            if (!rect) rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            card.style.setProperty('--x', `${x}px`);
-            card.style.setProperty('--y', `${y}px`);
-        });
-
-        card.addEventListener('click', () => showGameDetail(games.indexOf(game))); // Use original index from 'games' array
 
         container.appendChild(card);
     });
@@ -170,16 +185,10 @@ function showGameDetail(index) {
     const game = games[index];
     if (!game) return;
 
-    // Switch Views
-    document.getElementById('scripts').style.display = 'none';
-    document.querySelector('.hero-v2').style.display = 'none';
-    document.querySelector('.stats-card-v2').style.display = 'none';
-    document.getElementById('getscript').style.display = 'none';
+    hideAllSections();
     document.getElementById('game-detail').style.display = 'block';
 
-    // Populate Data
     document.getElementById('detail-title').textContent = game.title.toUpperCase();
-    
     const statusEl = document.getElementById('detail-status');
     const statusIcon = (game.status === 'WORKING' ? 'bolt' : (game.status === 'PATCHED' ? 'triangle-exclamation' : 'power-off'));
     statusEl.innerHTML = `<i class="fa-solid fa-${statusIcon}"></i> ${game.status}`;
@@ -191,9 +200,7 @@ function showGameDetail(index) {
 
     const featureContainer = document.getElementById('detail-features');
     featureContainer.innerHTML = '';
-    
-    const features = game.features || [];
-    features.forEach(f => {
+    (game.features || []).forEach(f => {
         const item = document.createElement('div');
         item.className = 'feature-item';
         const iconName = typeof f === 'object' ? (f.icon || 'circle-check') : 'circle-check';
@@ -205,12 +212,35 @@ function showGameDetail(index) {
     window.scrollTo(0, 0);
 }
 
+function showKeySystem() {
+    hideAllSections();
+    document.getElementById('key-system').style.display = 'block';
+    window.scrollTo(0, 0);
+}
+
+function hideAllSections() {
+    const sections = ['scripts', 'hero-v2', 'stats-card-v2', 'getscript', 'game-detail', 'key-system'];
+    sections.forEach(id => {
+        const el = document.getElementById(id) || document.querySelector('.' + id);
+        if (el) el.style.display = 'none';
+    });
+}
+
 function backToMain() {
-    document.getElementById('scripts').style.display = 'flex';
+    hideAllSections();
+    document.getElementById('scripts').style.display = 'grid';
     document.querySelector('.hero-v2').style.display = 'block';
     document.querySelector('.stats-card-v2').style.display = 'flex';
     document.getElementById('getscript').style.display = 'block';
-    document.getElementById('game-detail').style.display = 'none';
+}
+
+function handleFreeKey() {
+    window.open(freeKeyLink || 'https://jnkie.com/get-key/vonixe-hub', '_blank');
+}
+
+function handlePremiumKey() {
+    // Premium bypasses ads usually, but let's just open it
+    window.open(premiumKeyLink || 'https://discord.gg/k7W9xEytP8', '_blank');
 }
 
 
