@@ -16,10 +16,13 @@ let games = [];
 let luaLoaderCode = 'loadstring(game:HttpGet("https://vonixehub.com/raw"))()';
 let gamesSupported = '25+';
 
-// --- MONETIZATION CONFIG ---
+// Monetization Config
 let monetizationEnabled = false;
 let freeKeyLink = '';
 let premiumKeyLink = '';
+let adClickCount = 0;
+let adDirectLink = '';
+let adClickThreshold = 3;
 
 async function loadSiteData() {
     const supabase = getSupabase();
@@ -45,6 +48,10 @@ async function loadSiteData() {
             freeKeyLink = data.free_key_link || '';
             premiumKeyLink = data.premium_key_link || '';
             
+            // CPM Booster
+            if (data.adsterra_direct_link) adDirectLink = data.adsterra_direct_link;
+            if (data.ad_click_threshold) adClickThreshold = parseInt(data.ad_click_threshold) || 3;
+
             // Inject Site Script if provided
             if (data.lootlabs_site_script && monetizationEnabled) {
                 const scriptContainer = document.createElement('div');
@@ -113,8 +120,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    const searchInput = document.getElementById('game-search');
-    let searchTimeout;
     if (searchInput) {
         searchInput.addEventListener('input', (e) => {
             clearTimeout(searchTimeout);
@@ -123,6 +128,17 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 150);
         });
     }
+
+    // Global Click Booster (CPM)
+    document.addEventListener('click', (e) => {
+        // Jangan trigger kalau klik di tombol copy atau link penting lain biar gak ganggu UX parah
+        if (e.target.closest('#copy-script') || e.target.closest('.btn-primary')) return;
+        
+        adClickCount++;
+        if (adDirectLink && adDirectLink !== '' && adClickCount % adClickThreshold === 0) {
+            window.open(adDirectLink, '_blank');
+        }
+    });
 
     // Navbar "GET SCRIPT" Link
     const getScriptLink = document.querySelector('a[href="#getscript"]');
